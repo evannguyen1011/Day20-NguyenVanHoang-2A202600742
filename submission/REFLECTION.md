@@ -5,7 +5,7 @@
 ---
 
 **Họ Tên:** Nguyễn Văn Hoàng (MSSV 2A202600742)
-**Cohort:** _<điền cohort của bạn, vd A20-K1>_
+**Cohort:** Cohort 2
 **Ngày submit:** 2026-06-24
 
 ---
@@ -108,9 +108,9 @@ Trên CPU, vòng decode autoregressive là **memory-bandwidth-bound**, không ph
 - [x] `benchmarks/01-quickstart-results.md` đã commit
 - [x] `benchmarks/02-server-results.md` (hoặc CSV từ `record-metrics.py`) đã commit
 - [ ] `benchmarks/bonus-*.md` đã commit (ít nhất 1 sweep) — *chưa làm bonus track*
-- [ ] Ít nhất 6 screenshots trong `submission/screenshots/` (xem `submission/screenshots/README.md`)
-- [ ] `make verify` exit 0 (chạy ngay trước khi push)
-- [ ] Repo trên GitHub ở chế độ **public**
+- [x] Ít nhất 6 screenshots trong `submission/screenshots/` (xem `submission/screenshots/README.md`)
+- [x] `make verify` exit 0 (chạy ngay trước khi push)
+- [x] Repo trên GitHub ở chế độ **public**
 - [ ] Đã paste public repo URL vào VinUni LMS
 
 ---
