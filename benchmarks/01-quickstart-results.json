@@ -1,0 +1,36 @@
+{
+  "primary": {
+    "label": "primary (Q4_K_M)",
+    "model_path": "D:\\VINEXERCISE\\Day20-NguyenVanHoang-2A202600742\\models\\qwen2.5-1.5b-instruct-q4_k_m.gguf",
+    "n_threads": 6,
+    "n_ctx": 2048,
+    "n_batch": 512,
+    "n_gpu_layers": 99,
+    "load_ms": 1626.6,
+    "ttft_ms_p50": 136.6,
+    "ttft_ms_p95": 150.1,
+    "tpot_ms_p50": 35.29,
+    "tpot_ms_p95": 39.07,
+    "e2e_ms_p50": 2362.0,
+    "e2e_ms_p95": 2591.5,
+    "e2e_ms_p99": 2610.2,
+    "decode_rate_tok_s": 28.3
+  },
+  "compare": {
+    "label": "compare (Q2_K)",
+    "model_path": "D:\\VINEXERCISE\\Day20-NguyenVanHoang-2A202600742\\models\\qwen2.5-1.5b-instruct-q2_k.gguf",
+    "n_threads": 6,
+    "n_ctx": 2048,
+    "n_batch": 512,
+    "n_gpu_layers": 99,
+    "load_ms": 780.4,
+    "ttft_ms_p50": 176.7,
+    "ttft_ms_p95": 216.0,
+    "tpot_ms_p50": 28.6,
+    "tpot_ms_p95": 31.17,
+    "e2e_ms_p50": 1942.9,
+    "e2e_ms_p95": 2179.8,
+    "e2e_ms_p99": 2215.1,
+    "decode_rate_tok_s": 35.0
+  }
+}

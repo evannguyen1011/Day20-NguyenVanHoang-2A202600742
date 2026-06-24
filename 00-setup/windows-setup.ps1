@@ -41,11 +41,17 @@ if ($env:LLAMA_CUDA -eq '1') {
     $env:CMAKE_ARGS = '-DGGML_CUDA=on'
     pip install --upgrade --force-reinstall --no-cache-dir "llama-cpp-python[server]"
 } else {
-    Write-Host "==> Installing prebuilt llama-cpp-python (CPU)"
-    pip install --upgrade "llama-cpp-python[server]"
+    # Pin 0.3.19 (last proper cp312 AVX2 build on the CPU wheel index). The newer
+    # generic win_amd64 wheels (0.3.24+) are compiled with AVX-512 and crash with
+    # STATUS_ILLEGAL_INSTRUCTION (0xc000001d) on AVX2-only CPUs (e.g. AMD Zen 2).
+    Write-Host "==> Installing prebuilt llama-cpp-python 0.3.19 (CPU / AVX2)"
+    pip install "llama-cpp-python[server]==0.3.19" --extra-index-url https://abetlen.github.io/llama-cpp-python/whl/cpu
 }
 
 # 4. Probe + download model
+#    Force UTF-8 so the Unicode box-drawing output doesn't crash on the
+#    legacy cp1252 Windows console.
+$env:PYTHONUTF8 = '1'
 python .\00-setup\detect-hardware.py
 python .\00-setup\download-model.py
 

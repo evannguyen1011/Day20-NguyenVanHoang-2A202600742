@@ -51,7 +51,7 @@ def check_reflection_edited(path: Path, problems: list[str]) -> bool:
     if not path.exists():
         problems.append(f"MISSING  submission/REFLECTION.md")
         return False
-    text = path.read_text()
+    text = path.read_text(encoding="utf-8")
     leftover = []
     for pattern in TEMPLATE_MARKERS:
         # Some patterns are line-anchored (start with ^), others are inline.
@@ -71,7 +71,7 @@ def check_active_model(active_json: Path, problems: list[str]) -> bool:
     if not check_file(active_json, "models/active.json", problems):
         return False
     try:
-        cfg = json.loads(active_json.read_text())
+        cfg = json.loads(active_json.read_text(encoding="utf-8"))
     except Exception as exc:
         problems.append(f"CORRUPT  models/active.json — {exc}")
         return False
@@ -113,6 +113,13 @@ def maybe_check_server(problems: list[str]) -> None:
 
 
 def main() -> int:
+    # Windows consoles default to cp1252, which can't encode the ✓/✗ glyphs
+    # below. Force UTF-8 so `make verify` runs clean on a fresh Windows clone.
+    try:
+        sys.stdout.reconfigure(encoding="utf-8")
+    except Exception:
+        pass
+
     repo = Path(__file__).resolve().parent.parent
     problems: list[str] = []
 

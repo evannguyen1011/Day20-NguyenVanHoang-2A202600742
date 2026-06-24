@@ -54,7 +54,24 @@ def detect_cpu() -> dict:
             info["model"] = "unknown"
     elif sys_plat == "win32":
         rc, out = run(["wmic", "cpu", "get", "Name,NumberOfCores", "/format:value"])
-        if rc == 0:
+        if rc == 0 and "Name=" in out:
+            for line in out.splitlines():
+                if line.startswith("Name="):
+                    info["model"] = line.split("=", 1)[1].strip()
+                elif line.startswith("NumberOfCores="):
+                    val = line.split("=", 1)[1].strip()
+                    info["cores_physical"] = int(val) if val.isdigit() else None
+        else:
+            # wmic was removed in recent Windows 11 builds — fall back to PowerShell CIM.
+            rc, out = run(
+                [
+                    "powershell", "-NoProfile", "-Command",
+                    "$c=Get-CimInstance Win32_Processor;"
+                    "Write-Output ('Name=' + $c.Name);"
+                    "Write-Output ('NumberOfCores=' + $c.NumberOfCores)",
+                ],
+                timeout=15,
+            )
             for line in out.splitlines():
                 if line.startswith("Name="):
                     info["model"] = line.split("=", 1)[1].strip()
@@ -86,6 +103,29 @@ def detect_ram_gb() -> float:
                 val = line.split("=", 1)[1].strip()
                 if val.isdigit():
                     return round(int(val) / 1024**3, 1)
+        # wmic absent on recent Windows 11 — use the Win32 API via ctypes (stdlib).
+        try:
+            import ctypes
+
+            class MEMORYSTATUSEX(ctypes.Structure):
+                _fields_ = [
+                    ("dwLength", ctypes.c_ulong),
+                    ("dwMemoryLoad", ctypes.c_ulong),
+                    ("ullTotalPhys", ctypes.c_ulonglong),
+                    ("ullAvailPhys", ctypes.c_ulonglong),
+                    ("ullTotalPageFile", ctypes.c_ulonglong),
+                    ("ullAvailPageFile", ctypes.c_ulonglong),
+                    ("ullTotalVirtual", ctypes.c_ulonglong),
+                    ("ullAvailVirtual", ctypes.c_ulonglong),
+                    ("ullAvailExtendedVirtual", ctypes.c_ulonglong),
+                ]
+
+            stat = MEMORYSTATUSEX()
+            stat.dwLength = ctypes.sizeof(MEMORYSTATUSEX)
+            if ctypes.windll.kernel32.GlobalMemoryStatusEx(ctypes.byref(stat)):
+                return round(stat.ullTotalPhys / 1024**3, 1)
+        except Exception:
+            pass
     return 0.0
 
 
